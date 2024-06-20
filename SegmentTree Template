@@ -1,0 +1,44 @@
+//Segment Tree Code for minimum value query
+
+class SegmentTree{
+    public:
+    vector<int>segTree;
+    SegmentTree(int n){
+        segTree.resize(4*n+1);
+    }
+    void buildTree(int ind,int lo,int hi,vector<int>&ar){
+    //Base Case
+        if(lo==hi){
+            segTree[ind] = ar[lo];
+            return;
+        }
+        int mid = lo + (hi - lo)/2;
+        buildTree(2*ind+1,lo,mid,ar);
+        buildTree(2*ind+2,mid+1,hi,ar);
+        
+        segTree[ind] = min(segTree[2*ind+1] , segTree[2*ind+2]);
+    }
+
+    int query(int ind,int lo,int hi,int l,int r){
+        //No overlap
+        if(hi<l || r<lo) return INT_MAX;
+        //complete overlap
+        if(lo>=l && r>=hi) return segTree[ind];
+        int mid=lo+(hi-lo)/2;
+        int leftVal=query(2*ind+1,lo,mid,l,r);
+        int rightVal=query(2*ind+2,mid+1,hi,l,r);
+        return min(leftVal,rightVal);
+    }
+
+    void update(int ind,int lo,int hi,int i,int val){
+        //Base Case
+        if(lo==hi){
+            segTree[ind]=val;
+            return;
+        }
+        int mid=lo+(hi-lo)/2;
+        if(i<=mid) update(2*ind+1,lo,mid,i,val);
+        else update(2*ind+2,mid+1,hi,i,val);
+        segTree[ind]=min(segTree[2*ind+1] , segTree[2*ind+2]);
+    }
+};
